@@ -108,109 +108,93 @@ python app.py
 
 The API will be available at `http://localhost:8000`
 
-## 📖 API Usage
+End-to-End Workflow
+1️⃣ Create a Test Document
 
-### 1. Upload a Document
+The script automatically creates a text file:
 
-```bash
-curl -X POST "http://localhost:8000/upload" \
-  -F "file=@path/to/your/document.pdf"
-```
+Machine Learning Basics
+Machine learning enables computers to learn from data...
 
-**Response:**
-```json
+
+This file acts as the knowledge source for Q&A.
+
+2️⃣ Upload the Document
+
+The document is uploaded to the backend:
+
+POST /upload
+
+
+Response
+
 {
-  "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "status": "queued",
-  "message": "Document 'document.pdf' queued for processing. Check status at /job/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+  "job_id": "abc123"
 }
-```
 
-### 2. Check Processing Status
 
-```bash
-curl "http://localhost:8000/job/a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-```
+The job_id uniquely identifies the processing task.
 
-**Response:**
-```json
+3️⃣ Monitor Processing Status
+
+The script continuously polls:
+
+GET /job/{job_id}
+
+
+Possible statuses:
+
+processing – Document is being chunked and embedded
+
+completed – Ready for querying
+
+failed – Error during processing
+
+This ensures non-blocking background processing.
+
+4️⃣ Start Interactive Chat Session
+
+Once processing completes, the chat loop begins.
+
+--- Chat Session Started ---
+Ready! Ask a question:
+
+5️⃣ Ask Questions About the Document
+
+Each question is sent to:
+
+POST /query
+
+
+Request
+
 {
-  "job_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "status": "completed",
-  "progress": "Successfully processed 12 chunks"
+  "question": "What is machine learning?"
 }
-```
 
-### 3. Ask a Question
 
-```bash
-curl -X POST "http://localhost:8000/query" \
-  -H "Content-Type: application/json" \
-  -d '{"question": "What is the main topic of the document?"}'
-```
+Response
 
-**Response:**
-```json
 {
-  "answer": "The document discusses...",
-  "source_chunks": [
-    {
-      "chunk_id": 1,
-      "content": "Excerpt from the document...",
-      "source": "document.pdf",
-      "similarity_score": 0.8542
-    }
-  ],
+  "answer": "Machine learning enables computers to learn from data...",
   "metrics": {
-    "total_latency_ms": 1247.32,
-    "retrieval_latency_ms": 45.21,
-    "generation_latency_ms": 1202.11,
-    "chunks_retrieved": 5,
-    "timestamp": "2024-01-29T10:30:45.123456"
+    "total_latency_ms": 134
   }
 }
-```
 
-### 4. View System Metrics
+6️⃣ Exit the Chat
 
-```bash
-curl "http://localhost:8000/metrics"
-```
+Type:
 
-### 5. Health Check
+exit
 
-```bash
-curl "http://localhost:8000/health"
-```
 
-## 🧪 Testing with Python
+or
 
-```python
-import requests
+quit
 
-# Upload document
-with open("document.pdf", "rb") as f:
-    response = requests.post(
-        "http://localhost:8000/upload",
-        files={"file": f}
-    )
-    job_id = response.json()["job_id"]
 
-# Wait for processing
-import time
-while True:
-    status = requests.get(f"http://localhost:8000/job/{job_id}").json()
-    if status["status"] == "completed":
-        break
-    time.sleep(1)
-
-# Ask question
-response = requests.post(
-    "http://localhost:8000/query",
-    json={"question": "What is the main topic?"}
-)
-print(response.json()["answer"])
-```
+to end the session cleanly.
 
 ## ⚙️ Configuration
 
