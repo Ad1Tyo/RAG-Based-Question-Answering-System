@@ -1,0 +1,7 @@
+
+Machine Learning Basics
+
+Machine learning enables computers to learn from data without explicit programming.
+It includes supervised learning, unsupervised learning, and reinforcement learning.
+
+Applications include image recognition, natural language processing, and recommendation systems.

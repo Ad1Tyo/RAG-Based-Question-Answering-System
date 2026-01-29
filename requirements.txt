@@ -1,0 +1,17 @@
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.0.0
+python-multipart>=0.0.20
+slowapi>=0.1.9
+
+# LangChain dependencies
+langchain>=0.3.0
+langchain-chroma>=0.1.0
+langchain-core>=0.3.0
+langchain-ollama>=1.0.0
+
+# Vector store
+chromadb>=0.5.0
+
+# Document parsing
+PyPDF2>=3.0.0
